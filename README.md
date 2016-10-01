@@ -8,4 +8,4 @@ Saves Quizlet sets offline for use without internet.
 
 ## "Quiz Mode"
 * term/definition reverse optional (given definition, guess term, vice-versa)
-* "override" feature to override minute mistakes
+* "override" feature to override spelling mistakes
