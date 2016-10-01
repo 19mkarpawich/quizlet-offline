@@ -161,7 +161,7 @@ public class Main {
 							System.out.println("CORRECT!");
 						}else{
 							lastTerm = term;
-							System.out.print("INCORRECT! to override type %OVERRIDE% ");
+							System.out.println("INCORRECT! to override type %OVERRIDE% ");
 						}
 					}
 				}else{
@@ -170,7 +170,7 @@ public class Main {
 						System.out.println("CORRECT!");
 					}else{
 						lastTerm = term;
-						System.out.print("INCORRECT! to override type %OVERRIDE% ");
+						System.out.println("INCORRECT! to override type %OVERRIDE% ");
 					}
 				}
 			}
