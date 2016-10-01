@@ -36,6 +36,9 @@ public class Main {
 			
 		});
 		System.out.println("+-+-+-+-+-+-+ WELCOME TO QUIZLET-OFFLINE +-+-+-+-+-+-+");
+		System.out.println("+            (by Max Karpawich 10/1/2016)            +");
+		System.out.println("+  https://github.com/19mkarpawich/offline-quizlet/  +");
+		System.out.println("+                                                    +");     
 		System.out.println("+ 4 commands:                                        +");
 		System.out.println("+    download [name] [link]: downloads a card set    +");
 		System.out.println("+    open [index]: opens 'quiz mode' for a saved set +");
