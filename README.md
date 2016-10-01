@@ -1,4 +1,4 @@
-https://github.com/19mkarpawich/offline-quizlet/raw/master/quizlet-offline.jar
+DOWNLOAD: https://github.com/19mkarpawich/offline-quizlet/raw/master/quizlet-offline.jar
 
 # offline-quizlet
 Saves Quizlet sets offline for use without internet.
