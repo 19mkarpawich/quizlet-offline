@@ -41,7 +41,7 @@ public class CardSet {
 	}
 	
 	public Map<String,String> getTermPairs() {
-		return set;
+		return new HashMap<String,String>(set);
 	}
 
 }

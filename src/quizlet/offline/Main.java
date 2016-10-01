@@ -16,6 +16,7 @@ public class Main {
 	private Config cfg;
 	private List<CardSet> sets = new ArrayList<CardSet>();
 	private Map<String,String> wrong = new HashMap<String,String>();
+	private Scanner scan = new Scanner(System.in);
 	int currentQuiz = -1;
 	public static void main(String[] args) {
 		new Main();
@@ -30,6 +31,7 @@ public class Main {
 			@Override
 			public void run() {
 				System.out.println("exiting.. bye!");
+				scan.close();
 				save();
 				cfg.save();
 			}
@@ -115,7 +117,6 @@ public class Main {
 	
 	private void quizMode() {
 		System.out.println("YOU ARE NOW IN QUIZ MODE. TO EXIT TYPE %EXIT%");
-		Scanner scan = new Scanner(System.in);
 		System.out.println("term first? type 'y' for term first, 'n' for definition");
 		if(scan.nextLine().toLowerCase().contains("y")) {
 			wrong = sets.get(currentQuiz).getTermPairs();
@@ -126,6 +127,9 @@ public class Main {
 		}
 		String lastTerm = null;
 		while(wrong.size() > 0) {
+			System.out.println("");
+			System.out.println(wrong.size() + " terms left.");
+			System.out.println("");
 			List<String> keys = new ArrayList<String>(wrong.keySet());
 			Collections.shuffle(keys);
 			for(String term : keys) {
@@ -134,29 +138,33 @@ public class Main {
 				if(line.equalsIgnoreCase("%exit%")) {
 					currentQuiz = -1;
 					System.out.println("EXITED QUIZ MODE");
-					scan.close();
 					return;
 				}else if (line.equalsIgnoreCase("%override%")) {
 					if(lastTerm != null) {
 						wrong.remove(lastTerm);
-						System.out.println("CORRECT! (overridden: " + lastTerm + ") (continue)");
-						String line1 = scan.nextLine();
-						if(line1.equalsIgnoreCase("%exit%")) {
-							currentQuiz = -1;
-							System.out.println("EXITED QUIZ MODE");
-							scan.close();
-							return;
-						}
-						if(wrong.get(term).equals(line1)) {
-							wrong.remove(term);
-							System.out.println("CORRECT!");
-						}else{
-							lastTerm = term;
-							System.out.println("INCORRECT! to override type %OVERRIDE% ");
+						System.out.println("CORRECT! (overridden: " + lastTerm + ")");
+						lastTerm = null;
+						if(wrong.size() > 0) {
+							System.out.print(term + ": ");
+							String line1 = scan.nextLine();
+							if(line1.equalsIgnoreCase("%exit%")) {
+								currentQuiz = -1;
+								System.out.println("EXITED QUIZ MODE");
+								return;
+							}
+							if(wrong.get(term).equals(line1)) {
+								wrong.remove(term);
+								System.out.println("CORRECT!");
+							}else{
+								lastTerm = term;
+								System.out.println("INCORRECT! to override type %OVERRIDE% ");
+							}
 						}
 					}else{
-						System.out.println("no incorrect answer to override (continue)");
-						if(wrong.get(term).equals(line)) {
+						System.out.println("no incorrect answer to override");
+						System.out.print(term + ": ");
+						String line1 = scan.nextLine();
+						if(wrong.get(term).equals(line1)) {
 							wrong.remove(term);
 							System.out.println("CORRECT!");
 						}else{
@@ -179,12 +187,10 @@ public class Main {
 		System.out.println("you got \"" + sets.get(currentQuiz).getName() + "\" all correct! repeat? y/n");
 		String rspns = scan.nextLine();
 		if(rspns.toLowerCase().contains("y")) {
-			scan.close();
 			quizMode();
 		}else{
 			currentQuiz = -1;
 			System.out.println("EXITED QUIZ MODE");
-			scan.close();
 			return;
 		}
 			
