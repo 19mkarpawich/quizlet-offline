@@ -37,16 +37,19 @@ public class Main {
 			}
 			
 		});
-		System.out.println("+-+-+-+-+-+-+ WELCOME TO QUIZLET-OFFLINE +-+-+-+-+-+-+");
-		System.out.println("+            (by Max Karpawich 10/1/2016)            +");
-		System.out.println("+  https://github.com/19mkarpawich/offline-quizlet/  +");
-		System.out.println("+                                                    +");     
-		System.out.println("+ 4 commands:                                        +");
-		System.out.println("+    download [name] [link]: downloads a card set    +");
-		System.out.println("+    open [index]: opens 'quiz mode' for a saved set +");
-		System.out.println("+    list OR list [index]: lists saved sets or terms +");
-		System.out.println("+    exit: exits the program.                        +");
-		System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-");
+		
+		line();
+		print("+-+-+-+-+-+-+ WELCOME TO QUIZLET-OFFLINE +-+-+-+-+-+-+");
+		print("+            (by Max Karpawich 10/1/2016)            +");
+		print("+  https://github.com/19mkarpawich/offline-quizlet/  +");
+		print("+                                                    +");     
+		print("+ 5 commands:                                        +");
+		print("+    download [name] [link]: downloads a card set    +");
+		print("+    quiz [index]: opens 'quiz mode' for a saved set +");
+		print("+    list OR list [index]: lists saved sets or terms +");
+		print("+    exit: exits the program.                        +");
+		print("+    remove [index]: deletes a saved set.            +");
+		print("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-");
 		new Commands() {
 
 			@Override
@@ -61,53 +64,58 @@ public class Main {
 						if(!nameExists) {
 							CardSet set = QuizletAPI.getSet(args[0], args[1]);
 							sets.add(set);
-							System.out.println("downloaded set \"" + set.getName() + "\"");
+							line();
+							print("================================");
+							print("         SET DOWNLOADED");
+							print("   Name: " + set.getName());
+							print("   Link: " + args[1]);
+							print("\n\t================================");
 							
-						}else System.out.println("that name already exists. choose another");
-					}else{
-						System.out.println("correct usage: download [name] [link]");
-					}
+						}else error("that name already exists. choose another");
+					}else error("correct usage: download [name] [link]");
 					break;
-				case "open":
+				case "quiz":
 					if(args.length == 1) {
 						currentQuiz = Integer.parseInt(args[0]);
 						quizMode();
 					}else{
-						System.out.println("correct usage: open [index]");
+						error("correct usage: open [index]");
 					}
 					break;
 				case "list":
 					if(args.length == 0) {
-						System.out.println("-=-=-=-=-=- " + sets.size() + " sets -=-=-=-=-=-");
+						line();
+						print("-=-=-=-=-=- " + sets.size() + " sets -=-=-=-=-=-");
 						int i = 0;
 						for(CardSet set : sets) {
-							System.out.println();
-							System.out.println(i + ": " + set.getName() + ": " + set.getTermCount() + " terms");
+							print("");
+							print(i + ": " + set.getName() + ": " + set.getTermCount() + " terms");
 							i++;
 						}
 					}else if (args.length == 1) {
 						CardSet set = sets.get(Integer.parseInt(args[0]));
-						System.out.println("-=-=-=-=-=- " + set.getTermCount() + " terms -=-=-=-=-=-");
+						line();
+						print("-=-=-=-=-=- " + set.getTermCount() + " terms -=-=-=-=-=-");
 						int i = 0;
 						for(String term: set.getTerms()) {
-							System.out.println();
-							System.out.println(i + ": " + term + ": " + set.getDefinition(term));
+							print("");
+							print(i + ": " + term + ": " + set.getDefinition(term));
 							i++;
 						}
-					}else System.out.println("correct usage: list OR list [index] ");
+					}else error("correct usage: list OR list [index] ");
 					break;
 				case "remove":
 					if(args.length == 1) {
 						sets.remove(Integer.parseInt(args[0]));
 					}else{
-						System.out.println("correct usage: remove [index]");
+						error("correct usage: remove [index]");
 					}
 					break;
 				case "exit":
 					System.exit(1);
 					break;
 				default:
-					System.out.println("correct usage: [download/open/list/exit]");
+					error("correct usage: [download/quiz/list/exit/remove]");
 					break;
 				}
 			}
@@ -116,81 +124,137 @@ public class Main {
 	}
 	
 	private void quizMode() {
-		System.out.println("YOU ARE NOW IN QUIZ MODE. TO EXIT TYPE %EXIT%");
-		System.out.println("term first? type 'y' for term first, 'n' for definition");
+		line();
+		print("================================");
+		print("           QUIZ MODE\n");
+		print("   Name: " + sets.get(currentQuiz).getName() + "\n");
+		print("To exit, type %EXIT%. Print term first?");
+		print("Type 'y' for term first, 'n' for definition first.");
+		print("\n\t================================");
 		if(scan.nextLine().toLowerCase().contains("y")) {
 			wrong = sets.get(currentQuiz).getTermPairs();
-			System.out.println("going terms first");
+			line();
+			print("<---- TERM FIRST ---->");
 		}else{
-			System.out.println("going definitions first");
+			line();
+			print("<---- DEFINITION FIRST ---->");
 			wrong = sets.get(currentQuiz).getTermPairs().entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
 		}
 		String lastTerm = null;
 		while(wrong.size() > 0) {
-			System.out.println("");
-			System.out.println(wrong.size() + " terms left.");
-			System.out.println("");
+			line();
+			print("================================");
+			print(wrong.size() + " terms left.");
+			print("================================");
 			List<String> keys = new ArrayList<String>(wrong.keySet());
 			Collections.shuffle(keys);
 			for(String term : keys) {
-				System.out.print(term + ": ");
+				line();
+				printNoLineBreak(term + ": ");
 				String line = scan.nextLine();
 				if(line.equalsIgnoreCase("%exit%")) {
 					currentQuiz = -1;
-					System.out.println("EXITED QUIZ MODE");
+					line();
+					print("================================");
+					print("        EXITED QUIZ MODE");
+					print("================================");
 					return;
 				}else if (line.equalsIgnoreCase("%override%")) {
 					if(lastTerm != null) {
 						wrong.remove(lastTerm);
-						System.out.println("CORRECT! (overridden: " + lastTerm + ")");
+						line();
+						print("================================");
+						print("           CORRECT!\n\t");
+						print("   For: " + lastTerm);
+						print("\n\t================================");
 						lastTerm = null;
 						if(wrong.size() > 0) {
-							System.out.print(term + ": ");
+							line();
+							printNoLineBreak(term + ": ");
 							String line1 = scan.nextLine();
 							if(line1.equalsIgnoreCase("%exit%")) {
 								currentQuiz = -1;
-								System.out.println("EXITED QUIZ MODE");
+								line();
+								print("================================");
+								print("        EXITED QUIZ MODE");
+								print("================================");
 								return;
 							}
 							if(wrong.get(term).equals(line1)) {
 								wrong.remove(term);
-								System.out.println("CORRECT!");
+								line();
+								print("================================");
+								print("           CORRECT!\n\t");
+								print("   For: " + term);
+								print("\n\t================================");
 							}else{
 								lastTerm = term;
-								System.out.println("INCORRECT! to override type %OVERRIDE% ");
+								line();
+								print("================================");
+								print("           INCORRECT!\n\t");
+								print("   For: " + term + "\n");
+								print("To override type %OVERRIDE%");
+								print("\n\t================================");
 							}
 						}
 					}else{
-						System.out.println("no incorrect answer to override");
-						System.out.print(term + ": ");
+						error("no incorrect answer to override");
+						line();
+						printNoLineBreak(term + ": ");
 						String line1 = scan.nextLine();
 						if(wrong.get(term).equals(line1)) {
 							wrong.remove(term);
-							System.out.println("CORRECT!");
+							line();
+							print("================================");
+							print("           CORRECT!\n\t");
+							print("   For: " + term);
+							print("\n\t================================");
 						}else{
 							lastTerm = term;
-							System.out.println("INCORRECT! to override type %OVERRIDE% ");
+							line();
+							print("================================");
+							print("           INCORRECT!\n\t");
+							print("   For: " + term + "\n\t");
+							print("To override type %OVERRIDE%");
+							print("\n\t================================");
 						}
 					}
 				}else{
 					if(wrong.get(term).equals(line)) {
 						wrong.remove(term);
-						System.out.println("CORRECT!");
+						line();
+						print("================================");
+						print("           CORRECT!\n\t");
+						print("   For: " + term);
+						print("\n\t================================");
 					}else{
 						lastTerm = term;
-						System.out.println("INCORRECT! to override type %OVERRIDE% ");
+						line();
+						print("================================");
+						print("           INCORRECT!\n\t");
+						print("   For: " + term + "\n\t");
+						print("To override type %OVERRIDE%");
+						print("\n\t================================");
 					}
 				}
 			}
 			
 		}
-		System.out.println("you got \"" + sets.get(currentQuiz).getName() + "\" all correct! repeat? y/n");
+		line();
+		print("<+><+><+><+><+><+><+><+><+><+><+><+>");
+		print("      You got all correct!\n\t");
+		print("   Name: " + sets.get(currentQuiz).getName());
+		print("\n\tRepeat? Type 'y' for yes, 'n' for no.");
+		print("\n\t<+><+><+><+><+><+><+><+><+><+><+><+>");
 		String rspns = scan.nextLine();
 		if(rspns.toLowerCase().contains("y")) {
 			quizMode();
 		}else{
 			currentQuiz = -1;
-			System.out.println("EXITED QUIZ MODE");
+			line();
+			print("================================");
+			print("        EXITED QUIZ MODE");
+			print("================================");
 			return;
 		}
 			
@@ -214,6 +278,24 @@ public class Main {
 			sets.add(set);
 		}
 		cfg.clear();
+	}
+	
+	private void print(String msg) {
+		System.out.println("\t" + msg);
+	}
+	
+	private void printNoLineBreak(String msg) {
+		System.out.print("\t" + msg);
+	}
+	
+	private void line() { System.out.println("\n"); }
+	
+	private void error(String error) {
+		line();
+		print("================================");
+		print("            ERROR\n");
+		print(error);
+		print("\n\t================================");
 	}
 
 }
