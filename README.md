@@ -2,6 +2,7 @@ Download: https://github.com/19mkarpawich/quizlet-offline/raw/master/quizlet-off
 
 # quizlet-offline
 Saves Quizlet sets offline for use without internet.
+Quiz yourself on those sets using Quiz Mode (below)
 ## 5 Commands
 * **download [name] [link]:** downloads an online card set from the link and saves it under the new name.
 * **open [index]:** open "quiz mode" for the card set at that index.
