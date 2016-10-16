@@ -1,6 +1,6 @@
 **Download:** https://github.com/19mkarpawich/quizlet-offline/raw/master/quizlet-offline.jar
 
-# quizlet-offline
+# quizlet-offline v0.4
 Saves Quizlet sets offline for use without internet.
 Quiz yourself on those sets using Quiz Mode (below)
 ## 5 Commands
