@@ -155,9 +155,6 @@ public class Main {
 			List<String> keys = new ArrayList<String>(wrong.keySet());
 			Collections.shuffle(keys);
 			String skip = null;
-			for(String term : keys) System.out.print(term + ",");
-			System.out.println();
-			System.out.println(lastTerm);
 			for(String term : keys) {
 				if(skip == null || !skip.equals(term)) {
 					line();
