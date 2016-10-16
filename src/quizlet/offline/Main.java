@@ -41,7 +41,7 @@ public class Main {
 		line();
 		print("+-+-+-+-+-+-+ WELCOME TO QUIZLET-OFFLINE +-+-+-+-+-+-+");
 		print("+            (by Max Karpawich 10/1/2016)            +");
-		print("+  https://github.com/19mkarpawich/offline-quizlet/  +");
+		print("+  https://github.com/19mkarpawich/quizlet-offline/  +");
 		print("+                                                    +");     
 		print("+ 5 commands:                                        +");
 		print("+    download [name] [link]: downloads a card set    +");
@@ -106,7 +106,13 @@ public class Main {
 					break;
 				case "remove":
 					if(args.length == 1) {
-						sets.remove(Integer.parseInt(args[0]));
+						CardSet toRem = sets.get(Integer.parseInt(args[0]));
+						sets.remove(toRem);
+						line();
+						print("================================");
+						print("         SET REMOVED");
+						print("   Name: " + toRem.getName());
+						print("\n\t================================");
 					}else{
 						error("correct usage: remove [index]");
 					}
@@ -143,43 +149,72 @@ public class Main {
 		String lastTerm = null;
 		while(wrong.size() > 0) {
 			line();
-			print("================================");
+			print("=====================================================");
 			print(wrong.size() + " terms left.");
-			print("================================");
+			print("=====================================================");
 			List<String> keys = new ArrayList<String>(wrong.keySet());
 			Collections.shuffle(keys);
+			String skip = null;
+			for(String term : keys) System.out.print(term + ",");
+			System.out.println();
+			System.out.println(lastTerm);
 			for(String term : keys) {
-				line();
-				printNoLineBreak(term + ": ");
-				String line = scan.nextLine();
-				if(line.equalsIgnoreCase("%exit%")) {
-					currentQuiz = -1;
+				if(skip == null || !skip.equals(term)) {
 					line();
-					print("================================");
-					print("        EXITED QUIZ MODE");
-					print("================================");
-					return;
-				}else if (line.equalsIgnoreCase("%override%")) {
-					if(lastTerm != null) {
-						wrong.remove(lastTerm);
+					printNoLineBreak(term + ": ");
+					String line = scan.nextLine();
+					if(line.equalsIgnoreCase("%exit%")) {
+						currentQuiz = -1;
 						line();
 						print("================================");
-						print("           CORRECT!\n\t");
-						print("   For: " + lastTerm);
-						print("\n\t================================");
-						lastTerm = null;
-						if(wrong.size() > 0) {
+						print("        EXITED QUIZ MODE");
+						print("================================");
+						return;
+					}else if (line.equalsIgnoreCase("%override%")) {
+						if(lastTerm != null) {
+							wrong.remove(lastTerm);
+							line();
+							print("================================");
+							print("           CORRECT!\n\t");
+							print("   For: " + lastTerm);
+							print("\n\t================================");
+							skip = lastTerm;
+							lastTerm = null;
+							if(wrong.size() > 0 && !skip.equals(term)) {
+								line();
+								printNoLineBreak(term + ": ");
+								String line1 = scan.nextLine();
+								if(line1.equalsIgnoreCase("%exit%")) {
+									currentQuiz = -1;
+									line();
+									print("================================");
+									print("        EXITED QUIZ MODE");
+									print("================================");
+									return;
+								}
+								if(wrong.get(term).equals(line1)) {
+									wrong.remove(term);
+									line();
+									print("================================");
+									print("           CORRECT!\n\t");
+									print("   For: " + term);
+									print("\n\t================================");
+								}else{
+									lastTerm = term;
+									line();
+									print("================================");
+									print("           INCORRECT!\n\t");
+									print("   For: " + term);
+									print("   Correct: " + wrong.get(term) + "\n");
+									print("To override type %OVERRIDE%");
+									print("\n\t================================");
+								}
+							}
+						}else{
+							error("no incorrect answer to override");
 							line();
 							printNoLineBreak(term + ": ");
 							String line1 = scan.nextLine();
-							if(line1.equalsIgnoreCase("%exit%")) {
-								currentQuiz = -1;
-								line();
-								print("================================");
-								print("        EXITED QUIZ MODE");
-								print("================================");
-								return;
-							}
 							if(wrong.get(term).equals(line1)) {
 								wrong.remove(term);
 								line();
@@ -192,17 +227,14 @@ public class Main {
 								line();
 								print("================================");
 								print("           INCORRECT!\n\t");
-								print("   For: " + term + "\n");
+								print("   For: " + term);
+								print("   Correct: " + wrong.get(term) + "\n");
 								print("To override type %OVERRIDE%");
 								print("\n\t================================");
 							}
 						}
 					}else{
-						error("no incorrect answer to override");
-						line();
-						printNoLineBreak(term + ": ");
-						String line1 = scan.nextLine();
-						if(wrong.get(term).equals(line1)) {
+						if(wrong.get(term).equals(line)) {
 							wrong.remove(term);
 							line();
 							print("================================");
@@ -214,29 +246,13 @@ public class Main {
 							line();
 							print("================================");
 							print("           INCORRECT!\n\t");
-							print("   For: " + term + "\n\t");
+							print("   For: " + term);
+							print("   Correct: " + wrong.get(term) + "\n");
 							print("To override type %OVERRIDE%");
 							print("\n\t================================");
 						}
 					}
-				}else{
-					if(wrong.get(term).equals(line)) {
-						wrong.remove(term);
-						line();
-						print("================================");
-						print("           CORRECT!\n\t");
-						print("   For: " + term);
-						print("\n\t================================");
-					}else{
-						lastTerm = term;
-						line();
-						print("================================");
-						print("           INCORRECT!\n\t");
-						print("   For: " + term + "\n\t");
-						print("To override type %OVERRIDE%");
-						print("\n\t================================");
-					}
-				}
+				}else skip = null;
 			}
 			
 		}
