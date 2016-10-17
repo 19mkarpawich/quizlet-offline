@@ -21,4 +21,4 @@ Quiz yourself on those sets using Quiz Mode (below)
 * allow for special characters
 * "case-sensitive" option
 * "ignore-parenthesis" option
-
+* user required to type correct answer if incorrect
